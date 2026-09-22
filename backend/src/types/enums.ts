@@ -45,6 +45,11 @@ export enum TagCategory {
   Other = 'Other',
 }
 
+export enum SharePackStatus {
+  Active = 'Active',
+  Revoked = 'Revoked',
+}
+
 export enum UserRole {
   Admin = 'Admin',
   Moderator = 'Moderator',

@@ -31,6 +31,8 @@ MinIO Console 地址：http://localhost:9001
 - `GET /categories`、`POST /categories`：多级分类管理。
 - `GET /collections`、`POST /collections`、`PATCH /collections/:id/assets/:assetId`：收藏夹与协作素材集。
 - `POST /assets/:assetId/downloads`、`GET /downloads`：下载记录和许可校验。
+- `POST /share-packs`、`GET /share-packs/mine`、`GET /share-packs/:id`、`POST /share-packs/:id/revoke`：共享素材包（收藏集创建人挑选已发布素材生成，冻结素材清单与许可快照，份数原子扣减防超卖，过期/撤销/用尽拒绝）。
+- `POST /share-packs/claim`：凭领用码领取素材包，同账号重复领取幂等返回原结果。
 - `GET /tags`、`POST /tags`：标签管理。
 - `POST /reviews/assets/:assetId`、`GET /reviews`：素材审核记录。
 
@@ -38,10 +40,10 @@ MinIO Console 地址：http://localhost:9001
 
 ```text
 backend/src/
-├── routes/           # asset.routes.ts, category.routes.ts, collection.routes.ts, download.routes.ts, tag.routes.ts
-├── controllers/      # asset.controller.ts, category.controller.ts, collection.controller.ts, download.controller.ts, tag.controller.ts
-├── services/         # asset.service.ts, category.service.ts, collection.service.ts, download.service.ts, tag.service.ts, review.service.ts, storage.service.ts
-├── models/           # asset.schema.ts, category.schema.ts, collection.schema.ts, downloadRecord.schema.ts, tag.schema.ts, reviewRecord.schema.ts
+├── routes/           # asset.routes.ts, category.routes.ts, collection.routes.ts, download.routes.ts, sharePack.routes.ts, tag.routes.ts
+├── controllers/      # asset.controller.ts, category.controller.ts, collection.controller.ts, download.controller.ts, sharePack.controller.ts, tag.controller.ts
+├── services/         # asset.service.ts, category.service.ts, collection.service.ts, download.service.ts, sharePack.service.ts, tag.service.ts, review.service.ts, storage.service.ts
+├── models/           # asset.schema.ts, category.schema.ts, collection.schema.ts, downloadRecord.schema.ts, sharePack.schema.ts, sharePackClaim.schema.ts, tag.schema.ts, reviewRecord.schema.ts
 ├── middlewares/      # auth.middleware.ts, rbac.middleware.ts, auditLog.middleware.ts, errorHandler.middleware.ts, rateLimit.middleware.ts, requestLogger.middleware.ts, validation.middleware.ts
 ├── types/            # enums.ts, interfaces.ts
 ├── utils/            # logger.ts, response.ts, fileValidator.ts, thumbnailGenerator.ts
@@ -51,7 +53,7 @@ backend/src/
 
 ## 枚举位置
 
-共享枚举统一位于 `backend/src/types/enums.ts`，包含 `AssetType`、`LicenseType`、`AssetStatus`、`ReviewResult`、`DownloadPurpose`、`TagCategory` 和 `UserRole`。
+共享枚举统一位于 `backend/src/types/enums.ts`，包含 `AssetType`、`LicenseType`、`AssetStatus`、`ReviewResult`、`DownloadPurpose`、`TagCategory`、`SharePackStatus` 和 `UserRole`。
 
 ## License
 

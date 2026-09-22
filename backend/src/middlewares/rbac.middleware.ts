@@ -6,7 +6,8 @@ import { UserRole } from '../types/enums';
 export class RbacMiddleware implements NestMiddleware {
   use(req: Request & { user?: { role: UserRole } }, _res: Response, next: NextFunction) {
     const routePath = req.originalUrl ?? req.url ?? req.path;
-    if (req.method === 'POST' && routePath.includes('/downloads')) {
+    // 下载与凭码领取素材包对 Viewer 放行（等同获取素材的读操作）
+    if (req.method === 'POST' && (routePath.includes('/downloads') || routePath.includes('/share-packs/claim'))) {
       return next();
     }
     const writeMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
