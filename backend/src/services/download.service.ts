@@ -5,6 +5,7 @@ import { DownloadRecord, type DownloadRecordDocument } from '../models/downloadR
 import { AssetService } from './asset.service';
 import { DownloadPurpose, LicenseType, UserRole } from '../types/enums';
 import type { AuthUser } from '../types/interfaces';
+import { buildLicenseVersion } from '../utils/license';
 
 @Injectable()
 export class DownloadService {
@@ -29,7 +30,7 @@ export class DownloadService {
       assetId: new Types.ObjectId(assetId),
       downloaderId: user.id,
       purpose,
-      licenseVersion: `${asset.licenseType}-2026.1`,
+      licenseVersion: buildLicenseVersion(asset.licenseType),
     });
   }
 }

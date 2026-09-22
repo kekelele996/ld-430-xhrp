@@ -33,15 +33,19 @@ MinIO Console 地址：http://localhost:9001
 - `POST /assets/:assetId/downloads`、`GET /downloads`：下载记录和许可校验。
 - `GET /tags`、`POST /tags`：标签管理。
 - `POST /reviews/assets/:assetId`、`GET /reviews`：素材审核记录。
+- `POST /shared-packs`：收藏集创建人从已发布素材中挑选并生成共享素材包，设置领用码、有效期和总领取份数，生成时冻结素材清单与许可快照。
+- `GET /shared-packs/mine`、`GET /shared-packs/:id`：创建人查看共享包及实时份数（`totalCopies` / `claimedCount` / `remainingCopies`）与领取明细。
+- `POST /shared-packs/:id/revoke`：创建人撤销共享包，撤销后凭码领取被拒绝。
+- `POST /shared-packs/claim/:code`：不同账号凭码领取占用份数；同一账号重复领取幂等返回原结果且不重复计数；过期、撤销或份数用尽时拒绝；并发领取不会超卖。
 
 ## 目录结构
 
 ```text
 backend/src/
-├── routes/           # asset.routes.ts, category.routes.ts, collection.routes.ts, download.routes.ts, tag.routes.ts
-├── controllers/      # asset.controller.ts, category.controller.ts, collection.controller.ts, download.controller.ts, tag.controller.ts
-├── services/         # asset.service.ts, category.service.ts, collection.service.ts, download.service.ts, tag.service.ts, review.service.ts, storage.service.ts
-├── models/           # asset.schema.ts, category.schema.ts, collection.schema.ts, downloadRecord.schema.ts, tag.schema.ts, reviewRecord.schema.ts
+├── routes/           # asset.routes.ts, category.routes.ts, collection.routes.ts, download.routes.ts, tag.routes.ts, sharedPack.routes.ts
+├── controllers/      # asset.controller.ts, category.controller.ts, collection.controller.ts, download.controller.ts, tag.controller.ts, sharedPack.controller.ts
+├── services/         # asset.service.ts, category.service.ts, collection.service.ts, download.service.ts, tag.service.ts, review.service.ts, sharedPack.service.ts, storage.service.ts
+├── models/           # asset.schema.ts, category.schema.ts, collection.schema.ts, downloadRecord.schema.ts, tag.schema.ts, reviewRecord.schema.ts, sharedPack.schema.ts, packClaim.schema.ts
 ├── middlewares/      # auth.middleware.ts, rbac.middleware.ts, auditLog.middleware.ts, errorHandler.middleware.ts, rateLimit.middleware.ts, requestLogger.middleware.ts, validation.middleware.ts
 ├── types/            # enums.ts, interfaces.ts
 ├── utils/            # logger.ts, response.ts, fileValidator.ts, thumbnailGenerator.ts
@@ -51,8 +55,17 @@ backend/src/
 
 ## 枚举位置
 
-共享枚举统一位于 `backend/src/types/enums.ts`，包含 `AssetType`、`LicenseType`、`AssetStatus`、`ReviewResult`、`DownloadPurpose`、`TagCategory` 和 `UserRole`。
+共享枚举统一位于 `backend/src/types/enums.ts`，包含 `AssetType`、`LicenseType`、`AssetStatus`、`ReviewResult`、`DownloadPurpose`、`TagCategory`、`UserRole` 和 `SharedPackStatus`。
 
 ## License
 
 MIT
+
+## 共享素材包验证
+
+`backend/test/sharedPack.integration.ts` 覆盖快照冻结、幂等领取、过期/撤销/份数用尽拒绝、并发防超卖（含同账号并发）与创建人/领取人剩余量一致性：
+
+```bash
+cd backend && npm install && npm run test:shared-pack
+```
+

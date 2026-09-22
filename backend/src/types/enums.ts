@@ -51,3 +51,8 @@ export enum UserRole {
   Uploader = 'Uploader',
   Viewer = 'Viewer',
 }
+
+export enum SharedPackStatus {
+  Active = 'Active',
+  Revoked = 'Revoked',
+}
